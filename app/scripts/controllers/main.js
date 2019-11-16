@@ -91,9 +91,32 @@ angular.module('allKeyApp')
     $scope.findAll = function () {
       $scope.isLoading = true;
 
-      if ($scope.searchInput === '' || $scope.items.length <2) {
+      if($scope.searchInput === ''){
+        $scope.isLoading = false;
         return;
       }
+
+      if ($scope.items.length <2) {
+        var response = $scope.items[0];
+        var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
+          response.privateKey === $scope.searchInput;
+        if(check){
+          $scope.isLoading = false;
+          return;
+        }
+      } else {
+        $scope.items.forEach(value => {
+          var response = value;
+          var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
+            response.privateKey === $scope.searchInput;
+          if(check){
+            $scope.items = [response];
+            $scope.isLoading = false;
+            return;
+          }
+        });
+      }
+
       var response = {};
       var found = false;
 

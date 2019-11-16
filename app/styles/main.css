@@ -9,15 +9,15 @@ body{
 
 
 .loader {
-  border: 4px solid #f3f3f3;
-  border-top: 7px solid #3498db;
+  border: 13px solid #f3f3f3;
+  border-top: 15px solid #3498db;
   border-radius: 50%;
   position: absolute;
   float: right;
-  top: 119px;
-  width: 4rem;
-  height: 4rem;
-  right: 192px;
+  top: 50%;
+  width: 10rem;
+  height: 10rem;
+  right: 50%;
   animation: rotateCircleLoader 1.1s infinite linear;
 }
 
