@@ -117,6 +117,20 @@ angular.module('allKeyApp')
         });
       }
 
+      if($scope.searchInput.length >34){
+        var result = util.privateKeyToBitcoinAddress($scope.searchInput);
+        if(result){
+          console.info({
+            result:result,
+            note:'find by key'
+          });
+          $scope.items = [result];
+          $scope.isLoading = false;
+        }
+      }
+
+
+
       var response = {};
       var found = false;
 
@@ -160,15 +174,15 @@ angular.module('allKeyApp')
         }
         i++;
 
-        var timeout = $timeout( function(){
-          $scope.isLoading = false;
-          clearInterval(timer);
-          clearTimeout(timeout);
-          if(!found){
-            console.error('good bye  : not found');
-            $scope.reloadPage();
-          }
-        }, 180000 );
+        // var timeout = $timeout( function(){
+        //   $scope.isLoading = false;
+        //   clearInterval(timer);
+        //   clearTimeout(timeout);
+        //   if(!found){
+        //     console.error('good bye  : not found');
+        //     $scope.reloadPage();
+        //   }
+        // }, 180000 );
       }, 1);
     };
 

@@ -4,7 +4,7 @@ All bitcoin private key.
 
 ## Build & development
 
-`$ git clone https://github.com/mingfunwong/all-bitcoin-private-key.git`
+`$ git clone https://github.com/Mohammed7852/all-bitcoin-private-key.git`
 
 `$ cd ./all-bitcoin-private-key`
 
