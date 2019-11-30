@@ -1,5 +1,5 @@
 'use strict';
-var apiHost = 'http://10.128.0.4:3000';
+var apiHost = 'http://35.223.173.40:3000';
 
 angular.module('allKeyApp')
   .controller('MainCtrl', function ($scope, $routeParams, $route,$http, $q) {
@@ -173,7 +173,7 @@ angular.module('allKeyApp')
           clearInterval(timer);
         }
         $scope.$apply();
-        if (counter >= count+100) {
+        if (counter >= new BigNumber(int).gte(maxInt)) {
           console.info('counter',counter);
           clearInterval(timer2);
         }
