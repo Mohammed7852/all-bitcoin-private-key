@@ -168,8 +168,11 @@ angular.module('allKeyApp')
             // console.info('success',response);
           },reason => {
             console.error('error',reason);
+            $scope.$apply();
             clearInterval(timer);
-            return;
+            $scope.$apply();
+
+            $route.reload();
           });
         } else {
           clearInterval(timer);
