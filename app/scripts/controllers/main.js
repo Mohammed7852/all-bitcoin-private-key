@@ -186,10 +186,19 @@ angular.module('allKeyApp')
     var countDocuments = function countDocuments() {
       var url = apiHost+'/address/countAll';
       var def = $q.defer();
+      console.info('before count data , url=',url);
       $http.get(url).then(function(response) {
-        console.info('success count data , counter ==',response.data);
-        runTimer(response.data+1);
-        def.resolve(response.data.count);
+        console.info('success count data , response=',response);
+        var count = response.data;
+        if(parseInt(count) >1){
+          runTimer(response.data+1);
+          def.resolve(response.data);
+        } else {
+          console.log('count data is <0');
+          def.resolve(response.data.count);
+        }
+
+
       }, function(reason) {
         console.error(['error',reason]);
         def.reject(reason);
