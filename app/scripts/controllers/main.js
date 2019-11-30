@@ -1,5 +1,5 @@
 'use strict';
-var apiHost = 'http://localhost:3100';
+var apiHost = 'http://localhost:3000';
 
 angular.module('allKeyApp')
   .controller('MainCtrl', function ($scope, $routeParams, $route,$http, $q) {
@@ -47,11 +47,18 @@ angular.module('allKeyApp')
 
     ///////////////////////////////////////////////////////////////
     var findInDatabase = function findInDatabase(value){
-      var url = apiHost+'/object/'+value;
+      var url = apiHost+'/address/getOne';
       var def = $q.defer();
-      $http.get(url).then(function(response) {
-        console.info(response.data);
+      $http({
+        method: 'POST',
+        url: url,
+        dataType: 'json',
+        data: {search:value},
+        headers: { "Content-Type": "application/json" }
+      }).then(function(response) {
+        console.info('found in database , ' , response.data);
         $scope.items = response.data;
+        $scope.isLoading = false;
         def.resolve(response);
       }, function(reason) {
         console.error(['error',reason]);
@@ -65,81 +72,60 @@ angular.module('allKeyApp')
     $scope.findAll = function () {
       $scope.isLoading = true;
       if ($scope.searchInput === '') {
+        console.info('empty search input');
         $scope.isLoading = false;
         return;
       }
-      if ($scope.items.length < 2) {
-        var response = $scope.items[0];
+      var found = false;
+      $scope.items.forEach(value => {
+        var response = value;
         var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
           response.privateKey === $scope.searchInput;
         if (check) {
+          found = true;
+          console.info('found in this page');
+          $scope.items = [response];
           $scope.isLoading = false;
-          return;
         }
-      } else {
-        $scope.items.forEach(value => {
-          var response = value;
-          var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
-            response.privateKey === $scope.searchInput;
-          if (check) {
-            $scope.items = [response];
+      });
+
+      if(!found){
+        if ($scope.searchInput.length > 34) {
+          var result = util.privateKeyToBitcoinAddress($scope.searchInput);
+          if (result) {
+            console.info({
+              result: result,
+              note: 'find by key'
+            });
+            $scope.items = [result];
             $scope.isLoading = false;
+            return;
           }
-        });
-      }
+        } else  {
+          // find in database
+          findInDatabase($scope.searchInput);
 
-      if ($scope.searchInput.length > 34) {
-        var result = util.privateKeyToBitcoinAddress($scope.searchInput);
-        if (result) {
-          console.info({
-            result: result,
-            note: 'find by key'
-          });
-          $scope.items = [result];
-          $scope.isLoading = false;
+          // timer
+          // var i2 = 1;
+          // var timer2 = setInterval(function () {
+          //   var int = statInt.plus(i2).toString(10);
+          //   if (int >= 1 && new BigNumber(int).lte(maxInt)) {
+          //       var response = util.intToBitcoinAddress(int);
+          //       var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
+          //         response.privateKey === $scope.searchInput;
+          //       if (check) {
+          //         $scope.items = [response];
+          //         $scope.isLoading = false;
+          //         found = true;
+          //         console.info('found and index = ', i2);
+          //       }
+          //   } else {
+          //     clearInterval(timer2);
+          //   }
+          //   $scope.$apply();
+          //   i2++;
+          // }, 0);
         }
-      } else  {
-        $scope.isLoading = true;
-
-        var found = false;
-        // $scope.storage.forEach((value, index) => {
-        //   var response = value;
-        //   var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
-        //     response.privateKey === $scope.searchInput;
-        //   if (check) {
-        //     $scope.items = [response];
-        //     $scope.isLoading = false;
-        //     found = true;
-        //     console.info('found and index = ',index);
-        //   }
-        // });
-
-        // find in database
-        // findInDatabase($scope.searchInput);
-
-        $scope.isLoading = true;
-
-        // timer
-        var i2 = 1;
-        var timer2 = setInterval(function () {
-          var int = statInt.plus(i2).toString(10);
-          if (int >= 1 && new BigNumber(int).lte(maxInt)) {
-              var response = util.intToBitcoinAddress(int);
-              var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
-                response.privateKey === $scope.searchInput;
-              if (check) {
-                $scope.items = [response];
-                $scope.isLoading = false;
-                found = true;
-                console.info('found and index = ', i2);
-              }
-          } else {
-            clearInterval(timer2);
-          }
-          $scope.$apply();
-          i2++;
-        }, 0);
-
       }
     };
 
@@ -147,7 +133,7 @@ angular.module('allKeyApp')
 
 
     var postApi = function postApi(data){
-      var url = apiHost+'/object';
+      var url = apiHost+'/address';
       var def = $q.defer();
       $http({
         method: 'POST',
@@ -164,8 +150,8 @@ angular.module('allKeyApp')
     };
 
     var runTimer = function (count) {
+      console.info('start run timer , count = ',count);
       var counter = count>1?count:1;
-      $scope.storage = [];
       var timer2 = setInterval(function () {
         var int = statInt.plus(counter).toString(10);
         if (int >= 1 && new BigNumber(int).lte(maxInt)) {
@@ -176,37 +162,33 @@ angular.module('allKeyApp')
             addressUnCompressed: result.addressUnCompressed,
             index:counter,
           };
-          //
-          postApi(object).then(response=>{
+          postApi({
+            address:object
+          }).then(response=>{
             // console.info('success',response);
           },reason => {
-            // console.error('error',reason);
+            console.error('error',reason);
           });
-          //
-          $scope.storage.push(object);
         } else {
           clearInterval(timer);
         }
         $scope.$apply();
-        if (counter >= 1000000000) {
+        if (counter >= count+100) {
           console.info('counter',counter);
-          console.info('storage length',$scope.storage.length);
-          console.info('last elem',$scope.storage[$scope.storage.length-1]);
           clearInterval(timer2);
         }
         counter++;
-      }, 0.5);
+      }, 0.2);
     };
     // runTimer(0);
     ///////////////////////
 
-
     var countDocuments = function countDocuments() {
-      var url = apiHost+'/object/count';
+      var url = apiHost+'/address/countAll';
       var def = $q.defer();
       $http.get(url).then(function(response) {
-        console.info(['success',response.data]);
-        runTimer(response.data.count+1);
+        console.info('success count data , counter ==',response.data);
+        runTimer(response.data+1);
         def.resolve(response.data.count);
       }, function(reason) {
         console.error(['error',reason]);
@@ -214,7 +196,7 @@ angular.module('allKeyApp')
       });
       return def.promise;
     };
-    // countDocuments();
+    countDocuments();
     /////////////////////////
 
 
