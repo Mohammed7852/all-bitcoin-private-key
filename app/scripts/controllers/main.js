@@ -107,28 +107,28 @@ angular.module('allKeyApp')
           }
         } else  {
           // // find in database
-          // findInDatabase($scope.searchInput);
+          findInDatabase($scope.searchInput);
 
           // timer
           var i2 = 1;
-          var timer2 = setInterval(function () {
-            var int = statInt.plus(i2).toString(10);
-            if (int >= 1 && new BigNumber(int).lte(maxInt)) {
-                var response = util.intToBitcoinAddress(int);
-                var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
-                  response.privateKey === $scope.searchInput;
-                if (check) {
-                  $scope.items = [response];
-                  $scope.isLoading = false;
-                  found = true;
-                  console.info('found and index = ', i2);
-                }
-            } else {
-              clearInterval(timer2);
-            }
-            $scope.$apply();
-            i2++;
-          }, 0);
+          // var timer2 = setInterval(function () {
+          //   var int = statInt.plus(i2).toString(10);
+          //   if (int >= 1 && new BigNumber(int).lte(maxInt)) {
+          //       var response = util.intToBitcoinAddress(int);
+          //       var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
+          //         response.privateKey === $scope.searchInput;
+          //       if (check) {
+          //         $scope.items = [response];
+          //         $scope.isLoading = false;
+          //         found = true;
+          //         console.info('found and index = ', i2);
+          //       }
+          //   } else {
+          //     clearInterval(timer2);
+          //   }
+          //   $scope.$apply();
+          //   i2++;
+          // }, 0);
         }
       }
     };
@@ -211,7 +211,7 @@ angular.module('allKeyApp')
       });
       return def.promise;
     };
-    // countDocuments();
+    countDocuments();
     /////////////////////////
 
 
