@@ -173,10 +173,10 @@ angular.module('allKeyApp')
           clearInterval(timer);
         }
         $scope.$apply();
-        if (counter >= new BigNumber(int).gte(maxInt)) {
-          console.info('counter',counter);
-          clearInterval(timer2);
-        }
+        // if (counter >= new BigNumber(int).gte(maxInt)) {
+        //   console.info('counter',counter);
+        //   clearInterval(timer2);
+        // }
         counter++;
       }, 0.2);
     };
