@@ -168,6 +168,8 @@ angular.module('allKeyApp')
             // console.info('success',response);
           },reason => {
             console.error('error',reason);
+            clearInterval(timer);
+            return;
           });
         } else {
           clearInterval(timer);
@@ -178,7 +180,7 @@ angular.module('allKeyApp')
         //   clearInterval(timer2);
         // }
         counter++;
-      }, 0.2);
+      }, 0.4);
     };
     // runTimer(0);
     ///////////////////////
