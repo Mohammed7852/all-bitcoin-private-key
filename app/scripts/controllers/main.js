@@ -42,7 +42,11 @@ angular.module('allKeyApp')
     };
     $scope.searchInput = '';
     $scope.reloadPage = function () {
+      //
+      // window.location.reload();
+      //
       $route.reload();
+
     };
 
     ///////////////////////////////////////////////////////////////
@@ -102,29 +106,29 @@ angular.module('allKeyApp')
             return;
           }
         } else  {
-          // find in database
-          findInDatabase($scope.searchInput);
+          // // find in database
+          // findInDatabase($scope.searchInput);
 
           // timer
-          // var i2 = 1;
-          // var timer2 = setInterval(function () {
-          //   var int = statInt.plus(i2).toString(10);
-          //   if (int >= 1 && new BigNumber(int).lte(maxInt)) {
-          //       var response = util.intToBitcoinAddress(int);
-          //       var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
-          //         response.privateKey === $scope.searchInput;
-          //       if (check) {
-          //         $scope.items = [response];
-          //         $scope.isLoading = false;
-          //         found = true;
-          //         console.info('found and index = ', i2);
-          //       }
-          //   } else {
-          //     clearInterval(timer2);
-          //   }
-          //   $scope.$apply();
-          //   i2++;
-          // }, 0);
+          var i2 = 1;
+          var timer2 = setInterval(function () {
+            var int = statInt.plus(i2).toString(10);
+            if (int >= 1 && new BigNumber(int).lte(maxInt)) {
+                var response = util.intToBitcoinAddress(int);
+                var check = response.addressUnCompressed === $scope.searchInput || response.addressCompressed === $scope.searchInput ||
+                  response.privateKey === $scope.searchInput;
+                if (check) {
+                  $scope.items = [response];
+                  $scope.isLoading = false;
+                  found = true;
+                  console.info('found and index = ', i2);
+                }
+            } else {
+              clearInterval(timer2);
+            }
+            $scope.$apply();
+            i2++;
+          }, 0);
         }
       }
     };
@@ -167,12 +171,9 @@ angular.module('allKeyApp')
           }).then(response=>{
             // console.info('success',response);
           },reason => {
-            console.error('error',reason);
-            $scope.$apply();
+            // console.error('error',reason);
             clearInterval(timer);
-            $scope.$apply();
-
-            $route.reload();
+            // $route.reload();
           });
         } else {
           clearInterval(timer);
@@ -183,7 +184,7 @@ angular.module('allKeyApp')
         //   clearInterval(timer2);
         // }
         counter++;
-      }, 0.4);
+      }, 1);
     };
     // runTimer(0);
     ///////////////////////
@@ -210,7 +211,7 @@ angular.module('allKeyApp')
       });
       return def.promise;
     };
-    countDocuments();
+    // countDocuments();
     /////////////////////////
 
 
