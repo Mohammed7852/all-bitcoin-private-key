@@ -1,5 +1,5 @@
 'use strict';
-var apiHost = 'http://localhost:3000';
+var apiHost = 'http://10.128.0.4:3000';
 
 angular.module('allKeyApp')
   .controller('MainCtrl', function ($scope, $routeParams, $route,$http, $q) {
